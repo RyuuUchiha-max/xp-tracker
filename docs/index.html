@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Comeback</title>
+
+    <style>
+        body {
+            background-color: #e4d60f;
+            color: #e2e8f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #1e293b;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 400px;
+        }
+
+        h1 {
+            color: #e838f8;
+            margin-top: 0;
+        }
+
+        input {
+            padding: 10px;
+            margin-top: 15px;
+            width: 80%;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        button {
+            margin: 10px;
+            padding: 12px 20px;
+            font-size: 16px;
+            background-color: #38bdf8;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0ea5e9;
+        }
+
+        #counter {
+            font-size: 32px;
+            color: #facc15;
+            margin-top: 15px;
+        }
+
+        #status, #achievement {
+            margin-top: 10px;
+        }
+
+        #log {
+            margin-top: 25px;
+            text-align: left;
+            background-color: #0f172a;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        #log h2 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #4ade80;
+        }
+
+        #logList {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        #logList li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>otto and leggy 4ever</h1>
+
+        <div id="counter">XP: 0</div>
+        <div id="status">Status: Just Started</div>
+        <div id="achievement">Achievement: None yet</div>
+
+        <input type="number" id="xpInput" placeholder="Enter XP amount">
+
+        <br>
+
+        <button onclick="addXP()">Add XP</button>
+        <button onclick="resetXP()">Reset</button>
+        <button onclick="clearLog()">Clear Log</button>
+        <div id="log">
+            <h2>Activity Log</h2>
+            <ul id="logList"></ul>
+        </div>
+    </div>
+
+    <script>
+        let xp = localStorage.getItem("xp");
+
+        if (xp === null) {
+            xp = 0;
+        } else {
+            xp = parseInt(xp);
+        }
+
+        let logs = localStorage.getItem("logs");
+
+        if (logs === null) {
+            logs = ["Your journey starts now."];
+        } else {
+            logs = JSON.parse(logs);
+        }
+
+        updateDisplay();
+        renderLogs();
+
+        function addXP() {
+            let input = document.getElementById("xpInput").value;
+
+            if (input === "") return;
+
+            let amount = parseInt(input);
+
+            xp += amount;
+
+            localStorage.setItem("xp", xp);
+            updateDisplay();
+            addLog("You gained " + amount + " XP.");
+
+            document.getElementById("xpInput").value = "";
+        }
+
+        function resetXP() {
+            xp = 0;
+            localStorage.setItem("xp", xp);
+            updateDisplay();
+            addLog("XP was reset to 0.");
+        }
+
+        function updateDisplay() {
+            document.getElementById("counter").innerText = "XP: " + xp;
+
+            if (xp < 5) {
+                document.getElementById("status").innerText = "Status: Getting Started";
+            } else if (xp < 10) {
+                document.getElementById("status").innerText = "Status: Building Momentum";
+            } else if (xp < 20) {
+                document.getElementById("status").innerText = "Status: Locked In";
+            } else {
+                document.getElementById("status").innerText = "Status: Unstoppable";
+            }
+
+            if (xp >= 20) {
+                document.getElementById("achievement").innerText = "Achievement: Unstoppable";
+            } else if (xp >= 10) {
+                document.getElementById("achievement").innerText = "Achievement: Locked In";
+            } else if (xp >= 5) {
+                document.getElementById("achievement").innerText = "Achievement: Momentum";
+            } else {
+                document.getElementById("achievement").innerText = "Achievement: None yet";
+            }
+        }
+
+        function addLog(message) {
+            logs.unshift(message);
+            localStorage.setItem("logs", JSON.stringify(logs));
+            renderLogs();
+        }
+
+        function renderLogs() {
+            let logList = document.getElementById("logList");
+            logList.innerHTML = "";
+
+            for (let i = 0; i < logs.length; i++) {
+                let newItem = document.createElement("li");
+                newItem.innerText = logs[i];
+                logList.appendChild(newItem);
+            }
+        }
+        function clearLog() {
+    logs = [];
+    localStorage.setItem("logs", JSON.stringify(logs));
+    renderLogs();
+}
+    </script>
+</body>
+</html>
